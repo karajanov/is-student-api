@@ -2,9 +2,9 @@
 {
     public class QAddressByStreet
     { 
-        public string FirstName { get; set; }
+        public string StudentName { get; set; }
 
-        public string LastName { get; set; }
+        public string StudentSurname { get; set; }
 
         public string City { get; set; }
 

@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
+﻿using System.Diagnostics;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using UniversityApp.Models;
 using UniversityApp.Services.Repository.Interfaces;
 
@@ -12,19 +8,18 @@ namespace UniversityApp.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
+        private readonly IAddressRepository iar;
 
-        private IAddressRepository iar;
-
-        public HomeController(ILogger<HomeController> logger, IAddressRepository iar)
+        public HomeController(IAddressRepository iar)
         {
-            _logger = logger;
             this.iar = iar;
         }
 
         public async Task<IActionResult> Index()
         {
-            var x = await iar.GetAddressByStreetAsync("This Street");
+            var x = await iar.GetAddressInfoByIdAsync(12);
+
+           // var t = await iar.GetByIdAsync(1);
             return View();
         }
 

@@ -16,8 +16,6 @@ namespace UniversityApp.Services.Repository
             entity = context.Set<T>();
         }
 
-        public async Task<IEnumerable<T>> GetAllAsync() => await entity.ToListAsync();
-
         public async Task<T> GetByIdAsync(object id) => await entity.FindAsync(id);
 
         protected DbSet<T> GetEntity() => entity;
