@@ -55,6 +55,7 @@ namespace UniversityApp.Services.Repository
                                  where a.Street == street
                                  select new QAddressByStreet()
                                  {
+                                     AddressId = a.Id,
                                      StudentName = s.FirstName,
                                      StudentSurname = s.LastName,
                                      StudentIndex = s.StudentIndex,
@@ -66,25 +67,6 @@ namespace UniversityApp.Services.Repository
             return address;
         }
 
-        public async Task<IEnumerable<QAddressById>> GetAddressInfoByIdAsync(int id)
-        {
-            var addressList = await (from a in GetEntity()
-                                     join s in students on a.Id equals s.AddressId
-                                     where a.Id == id
-                                     select new QAddressById()
-                                     {
-                                         StudentName = s.FirstName,
-                                         StudentSurname = s.LastName,
-                                         StudentIndex = s.StudentIndex,
-                                         Country = a.Country,
-                                         City = a.City,
-                                         Street = a.Street
-                                     })
-                                     .ToListAsync();
-
-            return addressList;
-        }
-
         public async Task<IEnumerable<QAddressByCity>> GetAddressesByCityAsync(string city)
         {
             var addressList = await (from a in GetEntity()
@@ -92,6 +74,7 @@ namespace UniversityApp.Services.Repository
                                      where a.City == city
                                      select new QAddressByCity()
                                      {
+                                         AddressId = a.Id,
                                          StudentName = s.FirstName,
                                          StudentSurname = s.LastName,
                                          StudentIndex = s.StudentIndex,
@@ -110,6 +93,7 @@ namespace UniversityApp.Services.Repository
                                      where s.StudentIndex == index
                                      select new QAddressByStudentIndex()
                                      {
+                                         AddressId = a.Id,
                                          StudentName = s.FirstName,
                                          StudentSurname = s.LastName,
                                          Email = s.Mail,
@@ -138,6 +122,24 @@ namespace UniversityApp.Services.Repository
                 .ToListAsync();
 
             return addressList;
+        }
+
+        public async Task<IEnumerable<StudentViewModel>> GetStudentInfoByAddressIdAsync(int addressId)
+        {
+            var studentInfoList = await (from s in students
+                                         where s.AddressId == addressId
+                                         select s)
+                                     .ToListAsync();
+
+            var svmList = new List<StudentViewModel>();
+
+            foreach (var item in studentInfoList)
+            {
+                var svm = mapper.Map<StudentViewModel>(item);
+                svmList.Add(svm);
+            }
+
+            return svmList;
         }
     }
 }

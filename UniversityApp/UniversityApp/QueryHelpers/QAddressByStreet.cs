@@ -1,7 +1,9 @@
 ﻿namespace UniversityApp.QueryHelpers
 {
     public class QAddressByStreet
-    { 
+    {
+        public int AddressId { get; set; }
+
         public string StudentName { get; set; }
 
         public string StudentSurname { get; set; }

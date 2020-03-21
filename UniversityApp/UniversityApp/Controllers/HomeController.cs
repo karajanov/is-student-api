@@ -17,7 +17,7 @@ namespace UniversityApp.Controllers
 
         public async Task<IActionResult> Index()
         {
-            var x = await iar.GetAddressInfoByIdAsync(12);
+            var x = await iar.GetAddressByStudentIndexAsync("1241");
 
            // var t = await iar.GetByIdAsync(1);
             return View();

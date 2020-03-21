@@ -14,12 +14,12 @@ namespace UniversityApp.Services.Repository.Interfaces
 
         Task<QAddressByStreet> GetAddressByStreetAsync(string street);
 
-        Task<IEnumerable<QAddressById>> GetAddressInfoByIdAsync(int id);
-
         Task<IEnumerable<QAddressByCity>> GetAddressesByCityAsync(string city);
 
         Task<QAddressByStudentIndex> GetAddressByStudentIndexAsync(string index);
 
         Task<IEnumerable<QAddressByCountry>> GetAddressesByCountryAsync(string country);
+
+        Task<IEnumerable<StudentViewModel>> GetStudentInfoByAddressIdAsync(int addressId);
     }
 }

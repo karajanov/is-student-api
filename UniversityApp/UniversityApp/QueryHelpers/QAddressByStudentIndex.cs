@@ -7,6 +7,8 @@ namespace UniversityApp.QueryHelpers
 {
     public class QAddressByStudentIndex
     {
+        public int AddressId { get; set; }
+
         public string StudentName { get; set; }
 
         public string StudentSurname { get; set; }
