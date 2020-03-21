@@ -36,7 +36,9 @@ namespace UniversityApp
                 .UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
             });
 
-            services.AddTransient<IAddressRepository, AddressRepository>();
+            services
+                .AddTransient<IAddressRepository, AddressRepository>()
+                .AddTransient<IExamRepository, ExamRepository>();
 
             services.AddAutoMapper(typeof(Startup));
         }

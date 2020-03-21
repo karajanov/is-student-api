@@ -22,18 +22,6 @@ namespace UniversityApp.Services.Repository
             this.mapper = mapper;
         }
 
-        public async Task<AddressViewModel> GetAddressInfoByIdAsync(int id)
-        {
-            var address = await GetEntity()
-                .AsNoTracking()
-                .Where(a => a.Id == id)
-                .FirstOrDefaultAsync();
-
-            var avm = mapper.Map<AddressViewModel>(address);
-
-            return avm;
-        }
-
         public async Task<IEnumerable<AddressViewModel>> GetAllAsync()
         {
             var addressList = await GetEntity().ToListAsync();
@@ -46,6 +34,18 @@ namespace UniversityApp.Services.Repository
             }
 
             return mappedList;
+        }
+
+        public async Task<AddressViewModel> GetAddressByIdAsync(int id)
+        {
+            var address = await GetEntity()
+                .AsNoTracking()
+                .Where(a => a.Id == id)
+                .FirstOrDefaultAsync();
+
+            var avm = mapper.Map<AddressViewModel>(address);
+
+            return avm;
         }
 
         public async Task<QAddressByStreet> GetAddressByStreetAsync(string street)
@@ -66,6 +66,25 @@ namespace UniversityApp.Services.Repository
             return address;
         }
 
+        public async Task<IEnumerable<QAddressById>> GetAddressInfoByIdAsync(int id)
+        {
+            var addressList = await (from a in GetEntity()
+                                     join s in students on a.Id equals s.AddressId
+                                     where a.Id == id
+                                     select new QAddressById()
+                                     {
+                                         StudentName = s.FirstName,
+                                         StudentSurname = s.LastName,
+                                         StudentIndex = s.StudentIndex,
+                                         Country = a.Country,
+                                         City = a.City,
+                                         Street = a.Street
+                                     })
+                                     .ToListAsync();
+
+            return addressList;
+        }
+
         public async Task<IEnumerable<QAddressByCity>> GetAddressesByCityAsync(string city)
         {
             var addressList = await (from a in GetEntity()
@@ -84,6 +103,28 @@ namespace UniversityApp.Services.Repository
             return addressList;
         }
 
+        public async Task<QAddressByStudentIndex> GetAddressByStudentIndexAsync(string index)
+        {
+            var addressList = await (from a in GetEntity()
+                                     join s in students on a.Id equals s.AddressId
+                                     where s.StudentIndex == index
+                                     select new QAddressByStudentIndex()
+                                     {
+                                         StudentName = s.FirstName,
+                                         StudentSurname = s.LastName,
+                                         Email = s.Mail,
+                                         Country = a.Country,
+                                         City = a.City,
+                                         Street = a.Street
+                                     })
+                                     .FirstOrDefaultAsync();
+
+            return addressList;
+        }
+        
+        //an inner/left join with the Students table wouldn't be optimal
+        //the resulting query could yield thousands of addresses in a single country
+        //*in a real life scenario - the same can be stated for the city addresses query
         public async Task<IEnumerable<QAddressByCountry>> GetAddressesByCountryAsync(string country)
         {
             var addressList = await GetEntity()
