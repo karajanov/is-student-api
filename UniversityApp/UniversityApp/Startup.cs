@@ -10,6 +10,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using UniversityApp.Models;
+using UniversityApp.Services.Repository;
+using UniversityApp.Services.Repository.Interfaces;
 
 namespace UniversityApp
 {
@@ -32,6 +34,8 @@ namespace UniversityApp
                 options
                 .UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
             });
+
+            services.AddTransient<IAddressRepository, AddressRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

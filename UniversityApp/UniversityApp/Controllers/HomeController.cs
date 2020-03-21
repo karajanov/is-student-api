@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using UniversityApp.Models;
+using UniversityApp.Services.Repository.Interfaces;
 
 namespace UniversityApp.Controllers
 {
@@ -13,13 +14,17 @@ namespace UniversityApp.Controllers
     {
         private readonly ILogger<HomeController> _logger;
 
-        public HomeController(ILogger<HomeController> logger)
+        private IAddressRepository iar;
+
+        public HomeController(ILogger<HomeController> logger, IAddressRepository iar)
         {
             _logger = logger;
+            this.iar = iar;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
+            var x = await iar.GetAddressByStreetAsync("This Street");
             return View();
         }
 
