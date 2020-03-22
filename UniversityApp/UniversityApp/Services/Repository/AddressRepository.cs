@@ -126,10 +126,9 @@ namespace UniversityApp.Services.Repository
 
         public async Task<IEnumerable<StudentViewModel>> GetStudentInfoByAddressIdAsync(int addressId)
         {
-            var studentInfoList = await (from s in students
-                                         where s.AddressId == addressId
-                                         select s)
-                                     .ToListAsync();
+            var studentInfoList = await students
+                                  .Where(s => s.AddressId == addressId)
+                                  .ToListAsync();
 
             var svmList = new List<StudentViewModel>();
 

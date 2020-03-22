@@ -9,17 +9,20 @@ namespace UniversityApp.Controllers
     public class HomeController : Controller
     {
         private readonly IAddressRepository iar;
+        private readonly IExamRepository ier;
 
-        public HomeController(IAddressRepository iar)
+        public HomeController(IAddressRepository iar, IExamRepository ier)
         {
             this.iar = iar;
+            this.ier = ier;
         }
 
         public async Task<IActionResult> Index()
         {
             var x = await iar.GetAddressByStudentIndexAsync("1241");
 
-           // var t = await iar.GetByIdAsync(1);
+            var t = await ier.GetExamsWithLowestCreditsAsync();
+           
             return View();
         }
 

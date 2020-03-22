@@ -8,16 +8,26 @@ using UniversityApp.QueryHelpers;
 namespace UniversityApp.Services.Repository.Interfaces
 {
     public interface IExamRepository : IRepository<Exam>
-    {         
-        //Task<QExamBySubject> GetExamBySubjectAsync(string subject);
+    {
+        Task<decimal?> GetLowestExamCreditsAsync();
 
-        //Task<IEnumerable<QExamByCredits>> GetExamsWithLowestCreditsAsync();
+        Task<decimal?> GetHighestExamCreditsAsync();
 
-        //Task<IEnumerable<QExamByCredits>> GetExamsWithHighestCreditsAsync();
+        Task<IEnumerable<QExamByCredits>> GetExamsWithLowestCreditsAsync();
 
-        //Task<IEnumerable<QExamByCredits>> GetExamByCreditAsync(decimal credit);
+        Task<IEnumerable<QExamByCredits>> GetExamsWithHighestCreditsAsync();
 
-        //Task<IEnumerable<QExamByProfessor>> GetExamsByProfessorAsync(string professor);
+        Task<IEnumerable<QExamByCredits>> GetExamsByCreditsAsync(decimal credits);
+
+        //    Task<QExamBySubject> GetExamBySubjectAsync(string subject);
+
+        //    Task<IEnumerable<QExamByCredits>> GetExamsWithLowestCreditsAsync();
+
+        //    Task<IEnumerable<QExamByCredits>> GetExamsWithHighestCreditsAsync();
+
+        //    Task<IEnumerable<QExamByCredits>> GetExamByCreditAsync(decimal credit);
+
+        //    Task<IEnumerable<QExamByProfessor>> GetExamsByProfessorAsync(string professor);
 
     }
 }
