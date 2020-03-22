@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using UniversityApp.DataTransferObjects;
 using AutoMapper;
+using UniversityApp.Extensions;
 
 namespace UniversityApp.Services.Repository
 {
@@ -25,22 +26,18 @@ namespace UniversityApp.Services.Repository
         public async Task<IEnumerable<AddressViewModel>> GetAllAsync()
         {
             var addressList = await GetEntity().ToListAsync();
-            var mappedList = new List<AddressViewModel>();
 
-            foreach(var item in addressList)
-            {
-                var avm = mapper.Map<AddressViewModel>(item);
-                mappedList.Add(avm);
-            }
+            var mappedList = mapper.MapList<AddressViewModel, Address>(addressList);
 
             return mappedList;
         }
 
-        public async Task<AddressViewModel> GetAddressByIdAsync(int id)
+        public async Task<AddressViewModel> GetAddressInfoByIdAsync(int id)
         {
             var address = await GetEntity()
                 .AsNoTracking()
                 .Where(a => a.Id == id)
+                .Include(a => a.Students)
                 .FirstOrDefaultAsync();
 
             var avm = mapper.Map<AddressViewModel>(address);
@@ -122,23 +119,6 @@ namespace UniversityApp.Services.Repository
                 .ToListAsync();
 
             return addressList;
-        }
-
-        public async Task<IEnumerable<StudentViewModel>> GetStudentInfoByAddressIdAsync(int addressId)
-        {
-            var studentInfoList = await students
-                                  .Where(s => s.AddressId == addressId)
-                                  .ToListAsync();
-
-            var svmList = new List<StudentViewModel>();
-
-            foreach (var item in studentInfoList)
-            {
-                var svm = mapper.Map<StudentViewModel>(item);
-                svmList.Add(svm);
-            }
-
-            return svmList;
         }
     }
 }

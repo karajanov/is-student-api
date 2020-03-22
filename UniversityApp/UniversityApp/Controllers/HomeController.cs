@@ -19,10 +19,9 @@ namespace UniversityApp.Controllers
 
         public async Task<IActionResult> Index()
         {
-            var x = await iar.GetAddressByStudentIndexAsync("1241");
+            // var x = await iar.GetAllAsync();
 
-            var t = await ier.GetExamsWithLowestCreditsAsync();
-           
+            var t = await ier.GetExamBySubjectAsync("Databases");
             return View();
         }
 

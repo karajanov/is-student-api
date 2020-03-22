@@ -1,4 +1,7 @@
-﻿namespace UniversityApp.DataTransferObjects
+﻿using System.Collections.Generic;
+using UniversityApp.Models;
+
+namespace UniversityApp.DataTransferObjects
 {
     public class AddressViewModel
     {
@@ -9,5 +12,7 @@
         public string City { get; set; }
 
         public string Country { get; set; }
+
+        public List<Student> Students { get; set; }
     }
 }
