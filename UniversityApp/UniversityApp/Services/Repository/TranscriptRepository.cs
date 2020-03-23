@@ -22,24 +22,12 @@ namespace UniversityApp.Services.Repository
                 .ToListAsync();
         }
 
-        public async Task<bool> DeleteMultipleTranscriptsAsync(List<int> transcriptIds)
+        public async Task<IEnumerable<int>> GetTranscriptIdsByExamIdAsync(int examId)
         {
-            if (transcriptIds == null || transcriptIds.Count == 0)
-                return false;
-
-            foreach(var transcriptId in transcriptIds)
-            {
-                try
-                {
-                    await DeleteAsync(transcriptId);
-                }
-                catch (Exception)
-                {
-                    return false;
-                }
-            }
-
-            return true;
+            return await GetEntity()
+                .Where(t => t.ExamId == examId)
+                .Select(t => t.Id)
+                .ToListAsync();
         }
     }
 }

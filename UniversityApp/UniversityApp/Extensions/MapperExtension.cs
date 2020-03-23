@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace UniversityApp.Extensions
 {
@@ -14,11 +15,11 @@ namespace UniversityApp.Extensions
         /// <param name="mapper"></param>
         /// <param name="listToMapFrom"></param>
         /// <returns></returns>
-        public static IEnumerable<T> MapList<T, X>(this IMapper mapper, List<X> listToMapFrom)
+        public static IEnumerable<T> MapList<T, X>(this IMapper mapper, IEnumerable<X> listToMapFrom)
             where T : class
             where X : class
         {
-            if (listToMapFrom == null || listToMapFrom.Count == 0)
+            if (listToMapFrom == null || listToMapFrom.ToList().Count == 0)
                 return null;
 
             var mappedList = new List<T>();

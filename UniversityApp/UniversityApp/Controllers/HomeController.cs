@@ -1,8 +1,6 @@
 ﻿using System.Diagnostics;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using UniversityApp.Models;
-using UniversityApp.Services.Repository.Interfaces;
 
 namespace UniversityApp.Controllers
 {

@@ -1,4 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using UniversityApp.Services.Repository.Interfaces;
 
@@ -37,6 +40,27 @@ namespace UniversityApp.Services.Repository
             T existing = await entity.FindAsync(id);
             entity.Remove(existing);
             await SaveAsync();
+        }
+
+        public async Task<bool> DeleteMultipleRecordsAsync<X>(IEnumerable<X> idList)
+            where X : struct
+        {
+            if (idList == null)
+                return false;
+
+            foreach(var id in idList)
+            {
+                try
+                {
+                    await DeleteAsync(id);
+                }
+                catch (Exception)
+                {
+                    return false;
+                }
+            }
+
+            return true;
         }
 
         public async Task SaveAsync() => await context.SaveChangesAsync();

@@ -21,25 +21,5 @@ namespace UniversityApp.Services.Repository
                 .Select(s => s.Id)
                 .ToListAsync();
         }
-
-        public async Task<bool> DeleteMultipleStudentsAsync(List<int> studentIdsList)
-        {
-            if (studentIdsList == null || studentIdsList.Count == 0)
-                return false;
-
-            foreach(var studentId in studentIdsList)
-            {
-                try
-                {
-                    await DeleteAsync(studentId);
-                }
-                catch (Exception)
-                {
-                    return false;
-                }
-            }
-
-            return true;
-        }
     }
 }

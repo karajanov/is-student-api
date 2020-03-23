@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
@@ -16,9 +17,14 @@ namespace UniversityApp.Controllers.API
     {
         private readonly IMapper mapper;
         private readonly IExamRepository examRepository;
+        private readonly ITranscriptRepository transcriptRepository;
 
-        public ExamController(IExamRepository examRepository, IMapper mapper)
+        public ExamController(
+            ITranscriptRepository transcriptRepository,
+            IExamRepository examRepository,
+            IMapper mapper)
         {
+            this.transcriptRepository = transcriptRepository;
             this.examRepository = examRepository;
             this.mapper = mapper;
         }
@@ -131,9 +137,31 @@ namespace UniversityApp.Controllers.API
         }
 
         [HttpDelete("{id}")] // api/Exam/{id}
-        public void Delete(int id)
+        public async Task<IActionResult> DeleteExamAsync(int id)
         {
-            // .. soon
+            var existingExam = await examRepository.GetExamByIdAsync(id);
+
+            if (existingExam == null)
+                return NotFound("Invalid exam id");
+
+            var transcriptIdsList = await transcriptRepository.GetTranscriptIdsByExamIdAsync(id);
+
+            var isDeletionSuccessful = await transcriptRepository
+                .DeleteMultipleRecordsAsync(transcriptIdsList);
+
+            if (!isDeletionSuccessful)
+                return StatusCode(500, "Exam couldn't be deleted");
+
+            try
+            {
+                await examRepository.DeleteAsync(id);
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, "Exam couldn't be deleted");
+            }
+
+            return Ok("Exam successfully deleted");
         }
     }
 }

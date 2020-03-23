@@ -1,12 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using UniversityApp.Models;
 
 namespace UniversityApp.Services.Repository.Interfaces
 {
-    public interface ITranscriptRepository
+    public interface ITranscriptRepository : IRepository<Transcript>
     {
         Task<IEnumerable<int>> GetTranscriptIdsByStudentIdAsync(int studentId);
 
-        Task<bool> DeleteMultipleTranscriptsAsync(List<int> transciptIdsList);
+        Task<IEnumerable<int>> GetTranscriptIdsByExamIdAsync(int examId);
     }
 }

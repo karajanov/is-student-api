@@ -135,7 +135,7 @@ namespace UniversityApp.Controllers.API
                 var transcriptIdsList = await transcriptRepository.GetTranscriptIdsByStudentIdAsync(studentId);
 
                 var isSuccessful = await transcriptRepository
-                    .DeleteMultipleTranscriptsAsync(transcriptIdsList.ToList());
+                    .DeleteMultipleRecordsAsync(transcriptIdsList);
 
                 if (!isSuccessful)
                     return StatusCode(500, "Address couldn't be deleted");
@@ -143,7 +143,7 @@ namespace UniversityApp.Controllers.API
 
             //Deleting all student objects that are dependent on the address
              var isSuccessfulTwo = await studentRepository
-                .DeleteMultipleStudentsAsync(studentIdsList.ToList());
+                .DeleteMultipleRecordsAsync(studentIdsList);
 
             if (!isSuccessfulTwo)
                 return StatusCode(500, "Address couldn't be deleted");
