@@ -8,30 +8,30 @@ using UniversityApp.Services.Repository.Interfaces;
 
 namespace UniversityApp.Services.Repository
 {
-    public class StudentRepository : Repository<Student>, IStudentRepository
+    public class TranscriptRepository : Repository<Transcript>, ITranscriptRepository
     {
-        public StudentRepository(UniversityAppContext context)
+        public TranscriptRepository(UniversityAppContext context)
             : base(context)
         {}
 
-        public async Task<IEnumerable<int>> GetStudentIdsByAddressIdAsync(int addressId)
+        public async Task<IEnumerable<int>> GetTranscriptIdsByStudentIdAsync(int studentId)
         {
             return await GetEntity()
-                .Where(s => s.AddressId == addressId)
-                .Select(s => s.Id)
+                .Where(t => t.StudentId == studentId)
+                .Select(t => t.Id)
                 .ToListAsync();
         }
 
-        public async Task<bool> DeleteMultipleStudentsAsync(List<int> studentIdsList)
+        public async Task<bool> DeleteMultipleTranscriptsAsync(List<int> transcriptIds)
         {
-            if (studentIdsList == null || studentIdsList.Count == 0)
+            if (transcriptIds == null || transcriptIds.Count == 0)
                 return false;
 
-            foreach(var studentId in studentIdsList)
+            foreach(var transcriptId in transcriptIds)
             {
                 try
                 {
-                    await DeleteAsync(studentId);
+                    await DeleteAsync(transcriptId);
                 }
                 catch (Exception)
                 {

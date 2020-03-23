@@ -86,7 +86,6 @@ namespace UniversityApp.Controllers.API
             return await examRepository.GetExamsByProfessorAsync(name);
         } 
 
-        
         [HttpPost] // api/Exam
         public async Task<IActionResult> PostNewExamAsync([FromBody] ExamViewModel evm)
         {
@@ -106,7 +105,6 @@ namespace UniversityApp.Controllers.API
             return StatusCode(201, "Exam successfully inserted");
         }
 
-        
         [HttpPut("{id}")] // api/Exam/{id}
         public async Task<IActionResult> PutNewExamAsync(int id, [FromBody] ExamViewModel evm)
         {
@@ -132,10 +130,10 @@ namespace UniversityApp.Controllers.API
             return Ok("Exam successfully updated");
         }
 
-        // DELETE: api/ApiWithActions/5
-        [HttpDelete("{id}")]
+        [HttpDelete("{id}")] // api/Exam/{id}
         public void Delete(int id)
         {
+            // .. soon
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
@@ -16,10 +17,18 @@ namespace UniversityApp.Controllers.API
     {
         private readonly IMapper mapper;
         private readonly IAddressRepository addressRepository;
+        private readonly IStudentRepository studentRepository;
+        private readonly ITranscriptRepository transcriptRepository;
         
-        public AddressController(IAddressRepository addressRepository, IMapper mapper)
+        public AddressController
+            (IAddressRepository addressRepository,
+            IStudentRepository studentRepository,
+            ITranscriptRepository transcriptRepository,
+            IMapper mapper)
         {
+            this.transcriptRepository = transcriptRepository;
             this.addressRepository = addressRepository;
+            this.studentRepository = studentRepository;
             this.mapper = mapper;
         }
         
@@ -110,10 +119,46 @@ namespace UniversityApp.Controllers.API
             return Ok("Address successfully updated");
         }
 
-        // DELETE: api/ApiWithActions/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
+        [HttpDelete("{id}")] // api/Address/{id}
+        public async Task<IActionResult> DeleteAddressAsync(int id)
         {
+            var existingAddress = await addressRepository.GetAddressInfoByIdAsync(id);
+
+            if (existingAddress == null)
+                return NotFound("Invalid address id");
+
+            var studentIdsList = await studentRepository.GetStudentIdsByAddressIdAsync(id);
+
+            //Deleting all transcript that are dependent on the students that have the provided address id
+            foreach(var studentId in studentIdsList)
+            {
+                var transcriptIdsList = await transcriptRepository.GetTranscriptIdsByStudentIdAsync(studentId);
+
+                var isSuccessful = await transcriptRepository
+                    .DeleteMultipleTranscriptsAsync(transcriptIdsList.ToList());
+
+                if (!isSuccessful)
+                    return StatusCode(500, "Address couldn't be deleted");
+            }
+
+            //Deleting all student objects that are dependent on the address
+             var isSuccessfulTwo = await studentRepository
+                .DeleteMultipleStudentsAsync(studentIdsList.ToList());
+
+            if (!isSuccessfulTwo)
+                return StatusCode(500, "Address couldn't be deleted");
+
+            //Deleting the address
+            try
+            {
+                await addressRepository.DeleteAsync(id);
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, "Address couldn't be deleted");
+            }
+
+            return Ok("Address successfully deleted");
         }
     }
 }
