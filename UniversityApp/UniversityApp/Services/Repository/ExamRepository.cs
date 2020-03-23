@@ -132,22 +132,34 @@ namespace UniversityApp.Services.Repository
 
         public async Task<IEnumerable<QExtendedExamInfo>> GetExamsByProfessorAsync(string professor)
         {
-            var exam = await GetEntity()
+            var examList = await GetEntity()
                 .Where(e => e.ProfessorName == professor)
                 .ToListAsync();
 
-            var studentList = await (from s in students
-                                     join t in transcripts on s.Id equals t.StudentId
-                                     where t.ExamId == exam.Id
-                                     select s)
+            if (examList == null)
+                return null;
+
+
+            var resultList = new List<QExtendedExamInfo>();
+
+            foreach (var exam in examList)
+            {
+                var studentList = await (from s in students
+                                         join t in transcripts on s.Id equals t.StudentId
+                                         where t.ExamId == exam.Id
+                                         select s)
                             .ToListAsync();
 
-            return new QExtendedExamInfo()
-            {
-                ExamInfo = mapper.Map<ExamViewModel>(exam),
-                StudentList = mapper.MapList<StudentViewModel, Student>(studentList)
-            };
-        }
+                var item = new QExtendedExamInfo()
+                {
+                    ExamInfo = mapper.Map<ExamViewModel>(exam),
+                    StudentList = mapper.MapList<StudentViewModel, Student>(studentList)
+                };
 
+                resultList.Add(item);
+            }
+
+            return resultList;
+        }
     }
 }

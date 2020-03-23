@@ -1,27 +1,16 @@
 ﻿using System.Diagnostics;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using UniversityApp.Models;
-using UniversityApp.Services.Repository.Interfaces;
 
 namespace UniversityApp.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly IAddressRepository iar;
-        private readonly IExamRepository ier;
+        public HomeController()
+        {}
 
-        public HomeController(IAddressRepository iar, IExamRepository ier)
+        public IActionResult Index()
         {
-            this.iar = iar;
-            this.ier = ier;
-        }
-
-        public async Task<IActionResult> Index()
-        {
-            // var x = await iar.GetAllAsync();
-
-            var t = await ier.GetExamBySubjectAsync("Databases");
             return View();
         }
 
