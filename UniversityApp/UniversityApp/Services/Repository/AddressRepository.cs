@@ -32,17 +32,26 @@ namespace UniversityApp.Services.Repository
             return mappedList;
         }
 
-        public async Task<AddressViewModel> GetAddressInfoByIdAsync(int id)
+        public async Task<QAddressById> GetAddressInfoByIdAsync(int id)
         {
             var address = await GetEntity()
                 .AsNoTracking()
                 .Where(a => a.Id == id)
-                .Include(a => a.Students)
                 .FirstOrDefaultAsync();
 
-            var avm = mapper.Map<AddressViewModel>(address);
+            if (address == null)
+                return null;
 
-            return avm;
+            var studentList = await students
+                .Where(s => s.AddressId == address.Id)
+                .ToListAsync();
+
+            return new QAddressById()
+            {
+                AddressInfo = mapper.Map<AddressViewModel>(address),
+                StudentList = mapper.MapList<StudentViewModel, Student>(studentList)
+            };
+
         }
 
         public async Task<QAddressByStreet> GetAddressByStreetAsync(string street)

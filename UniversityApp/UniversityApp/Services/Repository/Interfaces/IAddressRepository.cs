@@ -10,7 +10,7 @@ namespace UniversityApp.Services.Repository.Interfaces
     { 
         Task<IEnumerable<AddressViewModel>> GetAllAsync();
 
-        Task<AddressViewModel> GetAddressInfoByIdAsync(int id);
+        Task<QAddressById> GetAddressInfoByIdAsync(int id);
 
         Task<QAddressByStreet> GetAddressByStreetAsync(string street);
 

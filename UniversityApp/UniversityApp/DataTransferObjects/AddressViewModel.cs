@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using UniversityApp.Models;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace UniversityApp.DataTransferObjects
 {
@@ -7,12 +6,13 @@ namespace UniversityApp.DataTransferObjects
     {
         public int AddressId { get; set; }
 
+        [StringLength(400, ErrorMessage = "Maximum length of 400 exceeded")]
         public string Street { get; set; }
 
+        [StringLength(400, ErrorMessage = "Maximum length of 400 exceeded")]
         public string City { get; set; }
 
+        [StringLength(400, ErrorMessage = "Maximum length of 400 exceeded")]
         public string Country { get; set; }
-
-        public List<Student> Students { get; set; }
     }
 }

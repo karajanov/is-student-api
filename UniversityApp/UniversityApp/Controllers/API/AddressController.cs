@@ -1,7 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using UniversityApp.DataTransferObjects;
+using UniversityApp.Models;
 using UniversityApp.QueryHelpers;
 using UniversityApp.Services.Repository.Interfaces;
 
@@ -11,11 +14,13 @@ namespace UniversityApp.Controllers.API
     [ApiController]
     public class AddressController : ControllerBase
     {
+        private readonly IMapper mapper;
         private readonly IAddressRepository addressRepository;
-
-        public AddressController(IAddressRepository addressRepository)
+        
+        public AddressController(IAddressRepository addressRepository, IMapper mapper)
         {
             this.addressRepository = addressRepository;
+            this.mapper = mapper;
         }
         
         [HttpGet]
@@ -27,7 +32,7 @@ namespace UniversityApp.Controllers.API
 
         [HttpGet]
         [Route("{id}")] // api/Address/{id}
-        public async Task<AddressViewModel> GetByIdAsync([FromRoute] int id)
+        public async Task<QAddressById> GetByIdAsync([FromRoute] int id)
         {
             return await addressRepository.GetAddressInfoByIdAsync(id);
         }
@@ -61,16 +66,48 @@ namespace UniversityApp.Controllers.API
         }
 
         
-        // POST: api/Address
-        [HttpPost]
-        public void Post([FromBody] string value)
+        [HttpPost] // api/Address
+        public async Task<IActionResult> PostNewAddressAsync([FromBody] AddressViewModel avm)
         {
+            if (!ModelState.IsValid)
+                Forbid("Invalid address model");
+
+            try
+            {
+                var address = mapper.Map<Address>(avm);
+                await addressRepository.InsertAsync(address);
+            }
+            catch(Exception)
+            {
+                return StatusCode(500, "Address couldn't be inserted");
+            }
+
+            return StatusCode(201, "Address successfully inserted");
         }
 
-        // PUT: api/Address/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        [HttpPut("{id}")] // api/Address/{id}
+        public async Task<IActionResult> PutNewAddressAsync(int id, [FromBody] AddressViewModel avm)
         {
+            var existingAddress = await addressRepository.GetAddressInfoByIdAsync(id);
+
+            if (existingAddress == null)
+                return NotFound("Invalid address id");
+
+            if (!ModelState.IsValid)
+                return Forbid("Invalid address model");
+
+            try
+            {
+                var address = mapper.Map<Address>(avm);
+                address.Id = id;
+                await addressRepository.UpdateAsync(address);
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, "Address couldn't be updated");
+            }
+
+            return Ok("Address successfully updated");
         }
 
         // DELETE: api/ApiWithActions/5

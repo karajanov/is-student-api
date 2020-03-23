@@ -42,6 +42,9 @@ namespace UniversityApp.Services.Repository
                 .Where(e => e.Id == id)
                 .FirstOrDefaultAsync();
 
+            if (exam == null)
+                return null;
+
             var evm = mapper.Map<ExamViewModel>(exam);
 
             return evm;

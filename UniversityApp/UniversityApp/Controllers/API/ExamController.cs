@@ -1,7 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using UniversityApp.DataTransferObjects;
+using UniversityApp.Models;
 using UniversityApp.QueryHelpers;
 using UniversityApp.Services.Repository.Interfaces;
 
@@ -11,11 +14,13 @@ namespace UniversityApp.Controllers.API
     [ApiController]
     public class ExamController : ControllerBase
     {
+        private readonly IMapper mapper;
         private readonly IExamRepository examRepository;
 
-        public ExamController(IExamRepository examRepository)
+        public ExamController(IExamRepository examRepository, IMapper mapper)
         {
             this.examRepository = examRepository;
+            this.mapper = mapper;
         }
 
         [HttpGet]
@@ -81,16 +86,50 @@ namespace UniversityApp.Controllers.API
             return await examRepository.GetExamsByProfessorAsync(name);
         } 
 
-        // POST: api/Exam
-        [HttpPost]
-        public void Post([FromBody] string value)
+        
+        [HttpPost] // api/Exam
+        public async Task<IActionResult> PostNewExamAsync([FromBody] ExamViewModel evm)
         {
+            if (!ModelState.IsValid)
+                Forbid("Invalid exam model");
+
+            try
+            {
+                var exam = mapper.Map<Exam>(evm);
+                await examRepository.InsertAsync(exam);
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, "Exam couldn't be inserted");
+            }
+
+            return StatusCode(201, "Exam successfully inserted");
         }
 
-        // PUT: api/Exam/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        
+        [HttpPut("{id}")] // api/Exam/{id}
+        public async Task<IActionResult> PutNewExamAsync(int id, [FromBody] ExamViewModel evm)
         {
+            var existingExam = await examRepository.GetExamByIdAsync(id);
+
+            if (existingExam == null)
+                return NotFound("Invalid exam id");
+
+            if (!ModelState.IsValid)
+                return Forbid("Invalid exam model");
+
+            try
+            {
+                var exam = mapper.Map<Exam>(evm);
+                exam.Id = id;
+                await examRepository.UpdateAsync(exam);
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, "Exam couldn't be updated");
+            }
+
+            return Ok("Exam successfully updated");
         }
 
         // DELETE: api/ApiWithActions/5
